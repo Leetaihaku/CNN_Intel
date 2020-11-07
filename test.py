@@ -1,10 +1,7 @@
-import math
-from torch.utils.tensorboard import SummaryWriter
+import torch
+import numpy as np
 
-writer = SummaryWriter()
-for step in range(-360,360):
-    angle_rad = step * math.pi / 180
-    writer.add_scalar('sin', math.sin(angle_rad),step)
-    writer.add_scalar('cos', math.cos(angle_rad),step)
-
-writer.close()
+target = np.zeros([45, 150])
+target = torch.from_numpy(target)
+print(target[0])
+print(target.shape)
