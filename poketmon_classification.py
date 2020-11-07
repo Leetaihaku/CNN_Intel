@@ -44,11 +44,11 @@ class Net(nn.Module):
     super(Net, self).__init__()
     # 합성곱층(Output_size = ((input_size - kernel_size + 2 * padding_size)/stride_size + 1)
     self.conv1 = nn.Conv2d(in_channels=CONV_IN, out_channels=CONV_MID1, kernel_size=5).cuda(device=DEVICE)
-    self.conv1 = nn.Conv2d(in_channels=CONV_MID1, out_channels=CONV_MID2, kernel_size=5).cuda(device=DEVICE)
-    self.conv2 = nn.Conv2d(in_channels=CONV_MID2, out_channels=CONV_OUT, kernel_size=5).cuda(device=DEVICE)
+    self.conv2 = nn.Conv2d(in_channels=CONV_MID1, out_channels=CONV_MID2, kernel_size=5).cuda(device=DEVICE)
+    self.conv3 = nn.Conv2d(in_channels=CONV_MID2, out_channels=CONV_OUT, kernel_size=5).cuda(device=DEVICE)
 
     # 전결합층
-    self.fc1 = nn.Linear(in_features=CONV_OUT*13*13, out_features=300).cuda()
+    self.fc1 = nn.Linear(in_features=CONV_OUT*12*12, out_features=300).cuda()
     self.fc2 = nn.Linear(in_features=300, out_features=200).cuda()
     self.fc3 = nn.Linear(in_features=200, out_features=150).cuda()
 
@@ -57,7 +57,7 @@ class Net(nn.Module):
     x = F.max_pool2d(F.relu(self.conv1(x)).cuda(device=DEVICE), 2)
     x = F.max_pool2d(F.relu(self.conv2(x)).cuda(device=DEVICE), 2)
     x = F.max_pool2d(F.relu(self.conv3(x)).cuda(device=DEVICE), 2)
-    x = x.view(-1, CONV_OUT*13*13)
+    x = x.view(-1, CONV_OUT*12*12)
     x = F.relu(self.fc1(x)).cuda(device=DEVICE)
     x = F.relu(self.fc2(x)).cuda(device=DEVICE)
     x = F.log_softmax(self.fc3(x), dim=1).cuda(device=DEVICE)
