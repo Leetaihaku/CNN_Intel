@@ -1,42 +1,34 @@
-3개층 컨브넷 - 중간 피처
+2개층 컨브넷 - 중간 피처
 2개층 전결합 - 중간 피처
-= 현재 최적 90%
-learning_rate = 0.01
+= 현재 최적 96%
+learning_rate = 1e-3
 batch_size = 128
-epochs = 500
-INPUT_SIZE = 64
+epochs = 3000
+INPUT_SIZE = 32
 KERNEL_SIZE = 5
 CONV_IN = 3
-CONV_MID1 = 9
-CONV_MID2 = 15
-CONV_OUT = 21
-FC_IN = 4
+CONV_MID1 = 22
+CONV_OUT = 28
+FC_IN = 5
+DROP_PROB = 0.5
 
 class Net(nn.Module):
   def __init__(self):
     super(Net, self).__init__()
     # 합성곱층(Output_size = ((input_size - kernel_size + 2 * padding_size)/stride_size + 1)
     self.conv1 = nn.Conv2d(in_channels=CONV_IN, out_channels=CONV_MID1, kernel_size=KERNEL_SIZE).cuda(device=DEVICE)
-    self.conv2 = nn.Conv2d(in_channels=CONV_MID1, out_channels=CONV_MID2, kernel_size=KERNEL_SIZE).cuda(device=DEVICE)
-    self.conv3 = nn.Conv2d(in_channels=CONV_MID2, out_channels=CONV_OUT, kernel_size=KERNEL_SIZE).cuda(device=DEVICE)
+    self.conv2 = nn.Conv2d(in_channels=CONV_MID1, out_channels=CONV_OUT, kernel_size=KERNEL_SIZE).cuda(device=DEVICE)
 
     # 전결합층
-    self.fc1 = nn.Linear(in_features=CONV_OUT*FC_IN*FC_IN, out_features=14).cuda()
-    self.fc2 = nn.Linear(in_features=14, out_features=6).cuda()
-    #self.fc3 = nn.Linear(in_features=8, out_features=6).cuda()
+    self.fc1 = nn.Linear(in_features=CONV_OUT*FC_IN*FC_IN, out_features=12).cuda()
+    self.fc2 = nn.Linear(in_features=12, out_features=6).cuda()
 
   def forward(self, x):
     # 풀링층(Max_pooling = n size = n으로 나눈 값)
     x = F.max_pool2d(F.relu(self.conv1(x)).cuda(device=DEVICE), 2)
     x = F.max_pool2d(F.relu(self.conv2(x)).cuda(device=DEVICE), 2)
-    x = F.max_pool2d(F.relu(self.conv3(x)).cuda(device=DEVICE), 2)
     x = x.view(-1, CONV_OUT*FC_IN*FC_IN)
-    #x = F.relu(self.fc1(x)).cuda(device=DEVICE)
     x = F.relu(self.fc1(x)).cuda(device=DEVICE)
+    x = F.dropout(x, p=DROP_PROB)
     x = F.log_softmax(self.fc2(x), dim=1).cuda(device=DEVICE)
     return x
-
-TIP
- - 전결합층의 노드 수는 Global Optima Convergency에 영향 적음
- - 전결합층의 층계 수는 영향 있음(양에 따라 고차원 판단, But 보편적 CNN 2계층 적절 => 수렴 한계오면 마지막 변수로서 증감시켜볼 것!)
- - ConvNet은 점진적 형태로 층계구성할 것! 추가적으로 층계 간 필터개수를 등차수열 형식으로, 절대 비율형식으로 크게 늘리지말 것!
