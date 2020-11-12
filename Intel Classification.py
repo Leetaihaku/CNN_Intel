@@ -20,7 +20,7 @@ JPG = '.jpg'
 #클래스 코드(Dictionary)
 label_dic = {
         'buildings' : 0,
-        'for est' : 1,
+        'forest' : 1,
         'glacier' : 2,
         'mountain' : 3,
         'sea' : 4,
