@@ -20,7 +20,7 @@ JPG = '.jpg'
 #클래스 코드(Dictionary)
 label_dic = {
         'buildings' : 0,
-        'forest' : 1,
+        'for est' : 1,
         'glacier' : 2,
         'mountain' : 3,
         'sea' : 4,
@@ -102,7 +102,7 @@ if __name__ == '__main__':
             img = Image.open(PATH+Code+'/'+image).convert('RGB')
             resize_img = img.resize((INPUT_SIZE, INPUT_SIZE))
 
-            #1채널로 가보자!
+            #3채널로 가보자!
             R, G, B = resize_img.split()
             R_resize_img = np.asarray(np.float32(R)/(255.0/2.0)-1.0)
             G_resize_img = np.asarray(np.float32(G)/(255.0/2.0)-1.0)
